@@ -1,0 +1,14 @@
+# ansible_local example
+
+Vagrant.configure("2") do |config|
+  config.vm.box = ENV['VAGRANT_BOX'] ? ENV['VAGRANT_BOX'] : "bento/fedora-27"
+
+  config.vm.provision "ansible_local" do |ansible|
+    ansible.version       = ENV['ANSIBLE_VERSION'] ? ENV['ANSIBLE_VERSION'] : "2.5.0"
+    ansible.install_mode  = "pip"
+    ansible.raw_arguments = Shellwords.shellsplit(ENV['ANSIBLE_ARGS']) if ENV['ANSIBLE_ARGS']
+    ansible.playbook      = "playbook.yml"
+    ansible.verbose       = true
+  end
+end
+
