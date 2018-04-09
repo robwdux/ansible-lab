@@ -1,0 +1,33 @@
+# Vagrantfile for 3 Node Cluster example
+#
+#   https://www.vagrantup.com/docs/provisioning/ansible.html#tips-and-tricks
+#   https://everythingshouldbevirtual.com/automation/virtualization/vagrant-ansible-provisioning-multi-nodes/
+#   https://www.simonholywell.com/post/2016/02/intelligent-vagrant-and-ansible-files/
+
+Vagrant.configure("2") do |config|
+  config.vm.box = ENV['VAGRANT_BOX'] ? ENV['VAGRANT_BOX'] : "bento/fedora-27"
+
+  # of cluster nodes
+  N = 3
+  (1..N).each do |machine_id|
+    m_id = (machine_id -1)
+
+    config.vm.define "machine#{machine_id}" do |machine|
+      machine.vm.hostname = "machine#{machine_id}"
+
+      machine.vm.network "private_network", ip: "192.168.77.#{20+machine_id}"
+      #machine.vm.network :forwarded_port, guest: "9990", host: "999#{m_id}"
+
+      # Only execute once the Ansible provisioner,
+      # when all the machines are up and ready.
+      if machine_id == N
+        machine.vm.provision :ansible do |ansible|
+          ansible.playbook = "playbook.yml"
+	  ansible.verbose  = true
+          # Disable default limit to connect to all the machines
+          ansible.limit    = "all"
+        end
+      end
+    end
+  end
+end

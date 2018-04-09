@@ -1,0 +1,9 @@
+---
+
+- hosts: all
+  gather_facts: false
+  pre_tasks:
+  - raw: sudo dnf -y install python2
+  tasks:
+  - setup:
+  - command: id
