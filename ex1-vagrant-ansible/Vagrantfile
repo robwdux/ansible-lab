@@ -1,0 +1,11 @@
+# ansible (remote) example
+
+Vagrant.configure("2") do |config|
+  config.vm.box = ENV['VAGRANT_BOX'] ? ENV['VAGRANT_BOX'] : "bento/fedora-27"
+
+  config.vm.provision "ansible" do |ansible|
+    ansible.verbose  = true
+    ansible.playbook = "playbook.yml"
+  end
+end
+
